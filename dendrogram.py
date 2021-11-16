@@ -8,7 +8,7 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
 
-trackingdf = pd.read_csv("alldata.csv")
+trackingdf = pd.read_csv("stargraphdata1.csv")
 teams = trackingdf['TEAM'].to_numpy()
 trackingdf = trackingdf.drop('TEAM', axis=1)
 print()
