@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 
 
+
 def plot_team(team):
     points = len(keystats)
     angles = np.linspace(0, 2 * np.pi, points, endpoint=False).tolist()
@@ -29,37 +30,52 @@ def plot_team(team):
     
     ax.plot(angles, team_stats, linewidth=0.75, color = color2)
     ax.fill(angles, team_stats, alpha=0.25, color = color1)
-    ax.set_title(team + " Offensive Play Profile (2020-21)", y=1.08)
+    ax.set_title(team + " Offensive Style (2020-21)", y=1.08)
     
-    plt.savefig('playtype_graphs/{} Offensive Play Profile.png'.format(team), bbox_inches='tight')
+    plt.savefig('style_graphs/{} Offensive Style.png'.format(team), bbox_inches='tight')
 
 
 
-playtype = pd.read_csv('playtype.csv')  
+tracking = pd.read_csv('tracking.csv')  
 colors = pd.read_csv('teamcolors.csv', delimiter = "\t", header = 1)  
 colors = colors.replace("Los Angeles Clippers", "LA Clippers")
 
-pnr_sum = playtype["PICKNROLL(ball-handler) FREQ"] + playtype["PICKNROLL(role-man) FREQ"]
-playtype["PNR FREQUENCY"] = pnr_sum
-
-teams = playtype.get("TEAM").tolist()
+teams = tracking.get("TEAM").tolist()
 
 teamstats = dict.fromkeys(teams)
 
 for team in teams:
     teamstats[team] = []
 
-keystats = ["ISOLATION FREQ", "PNR FREQUENCY", "POSTUP FREQ", "TRANSITION FREQ", "SPOT UP FREQ"]
+keystats = ["AVG SPEED OFF", "AVG SEC PER TOUCH", "PASSES MADE", '0-3ft RIM FREQ', '10-16ft MIDRANGE FREQ', '3PT FREQ']
 
 scaler = MinMaxScaler()
-playtype[keystats] = scaler.fit_transform(playtype[keystats])
+tracking[keystats[:3]] = scaler.fit_transform(tracking[keystats[:3]])
 
-for index, row in playtype.iterrows():
-    for stat in keystats:
+for index, row in tracking.iterrows():
+    for stat in keystats[:3]:
         teamstats[row["TEAM"]].append(row[stat])
 
+shottypes = pd.read_html('shotdistances.xls')[0]
+
+shottypes.columns = [f'{i} {j}' for i, j in shottypes.columns]
+
+shottypes = shottypes.rename(columns={"Unnamed: 1_level_0 Team": "TEAM", "% of FGA by Distance 10-16": "10-16ft MIDRANGE FREQ", 
+                                      "% of FGA by Distance 0-3": "0-3ft RIM FREQ", '% of FGA by Distance 3P': "3PT FREQ"})
+
+shottypes['TEAM'] = shottypes['TEAM'].apply(lambda x: x.rstrip("*"))
+
+shottypes = shottypes.replace("Los Angeles Clippers", "LA Clippers")
+
+shottypes[keystats[3:]] = scaler.fit_transform(shottypes[keystats[3:]])
+
+for index, row in shottypes.iterrows():
+    for stat in keystats[3:]:
+        if row["TEAM"] in teamstats:
+            teamstats[row["TEAM"]].append(row[stat])
 
 for team in teams:
     print(team)
     plot_team(team)
     
+
