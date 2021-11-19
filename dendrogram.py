@@ -8,16 +8,17 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
 
-trackingdf = pd.read_csv("playtype.csv")
+trackingdf = pd.read_csv("stargraphdata1.csv")
 teams = trackingdf['TEAM'].to_numpy()
 trackingdf = trackingdf.drop('TEAM', axis=1)
-print(teams)
+print()
 
 
 scaler = StandardScaler()
 scaler.fit(trackingdf)
 StandardScaler(copy=True, with_mean=True, with_std=True)
 samples_scaled = scaler.transform(trackingdf)
+print(samples_scaled)
 
 mergings = linkage(trackingdf, method='complete')
 
