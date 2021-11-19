@@ -30,7 +30,7 @@ def plot_team(team):
     
     ax.plot(angles, team_stats, linewidth=0.75, color = color2)
     ax.fill(angles, team_stats, alpha=0.25, color = color1)
-    ax.set_title(team + " Offensive Style (2020-21)", y=1.08)
+    ax.set_title(team + " Offensive Style (2020-21)\n Offensive Rating:" + rating[rating["TEAM"] == team]["OFFRTG"].to_string(index = False), y=1.08)
     
     plt.savefig('style_graphs/{} Offensive Style.png'.format(team), bbox_inches='tight')
 
@@ -77,5 +77,7 @@ for index, row in shottypes.iterrows():
 for team in teams:
     print(team)
     plot_team(team)
+
+rating = pd.read_csv('rating.csv')      
     
 
