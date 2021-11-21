@@ -8,7 +8,7 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
 
-trackingdf = pd.read_csv("stargraphdata1.csv")
+trackingdf = pd.read_csv("offdata.csv")
 teams = trackingdf['TEAM'].to_numpy()
 trackingdf = trackingdf.drop('TEAM', axis=1)
 print()
@@ -28,4 +28,5 @@ dendrogram(mergings,
            leaf_font_size=6,
            orientation='right'
 )
+plt.title('Clustering NBA Teams')
 plt.show()
